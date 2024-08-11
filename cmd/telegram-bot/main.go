@@ -121,11 +121,9 @@ func (t *TrainerBot) processMessage(ctx context.Context, b *bot.Bot, update *mod
 		case StateSolvedCorrectly:
 			t.say(ctx, b, chatID, "Correct!")
 			sess.state = StateHome
-			break
 		case StateSolvedIncorrectly:
 			t.say(ctx, b, chatID, "Wrong, try again.")
 			sess.state = StateWaitingForResponse
-			break
 		}
 	}
 
@@ -133,8 +131,7 @@ func (t *TrainerBot) processMessage(ctx context.Context, b *bot.Bot, update *mod
 }
 
 func (t *TrainerBot) say(ctx context.Context, b *bot.Bot, chatID ChatID, text string) {
-	b.SendMessage(ctx, &bot.SendMessageParams{ChatID: chatID, Text: text})
-
+	_, _ = b.SendMessage(ctx, &bot.SendMessageParams{ChatID: chatID, Text: text})
 }
 
 type ChatID int64
