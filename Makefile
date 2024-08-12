@@ -4,3 +4,6 @@ lint:
 fmt:
 	gofumpt -w -l -extra .
 
+test:
+	go test ./...
+
