@@ -9,10 +9,10 @@ type State string
 
 const (
 	StartState              State = "start"
-	StateHome               State = "home"
-	StateWaitingForResponse State = "waiting-for-response"
-	StateSolvedCorrectly    State = "solved-correctly"
-	StateSolvedIncorrectly  State = "solved-incorrectly"
+	HomeState               State = "home"
+	WaitingForResponseState State = "waiting-for-response"
+	SolvedCorrectlyState    State = "solved-correctly"
+	SolvedIncorrectlyState  State = "solved-incorrectly"
 )
 
 type Session struct {

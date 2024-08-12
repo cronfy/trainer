@@ -57,7 +57,7 @@ func (t *Bot) ProcessMessage(ctx context.Context, b tgb.GoTgBot, update *models.
 
 func (t *Bot) processEvent(ctx context.Context, b tgb.GoTgBot, event tgb.Event) {
 	chatID := event.ChatID
-	sess := t.sessionStorage.GetOrCreate(chatID)
+	sess := t.sessionStorage.GetOrCreate(chatID, tgb.Session{State: tgb.StartState})
 
 	if event.EventType == tgb.CommandEventType {
 		switch event.Command {
@@ -76,13 +76,13 @@ func (t *Bot) processEvent(ctx context.Context, b tgb.GoTgBot, event tgb.Event) 
 		switch sess.State {
 		case tgb.StartState:
 			t.say(ctx, b, chatID, "Hello! I am your trainer. I will give you tasks, reply with an answer.\n\nSend any message when ready.")
-			sess.State = tgb.StateHome
-		case tgb.StateHome:
+			sess.State = tgb.HomeState
+		case tgb.HomeState:
 			t.giveMultiplyTask(ctx, b, chatID, &sess)
-			sess.State = tgb.StateWaitingForResponse
-		case tgb.StateWaitingForResponse:
+			sess.State = tgb.WaitingForResponseState
+		case tgb.WaitingForResponseState:
 			if sess.MultiplyTask == nil {
-				sess.State = tgb.StateHome
+				sess.State = tgb.HomeState
 				nextStep = true
 				break
 			}
@@ -92,18 +92,18 @@ func (t *Bot) processEvent(ctx context.Context, b tgb.GoTgBot, event tgb.Event) 
 			}
 
 			if t.verifySolution(*sess.MultiplyTask, event.Message) {
-				sess.State = tgb.StateSolvedCorrectly
+				sess.State = tgb.SolvedCorrectlyState
 			} else {
-				sess.State = tgb.StateSolvedIncorrectly
+				sess.State = tgb.SolvedIncorrectlyState
 			}
 			nextStep = true
-		case tgb.StateSolvedCorrectly:
+		case tgb.SolvedCorrectlyState:
 			t.say(ctx, b, chatID, "Correct!")
-			sess.State = tgb.StateHome
+			sess.State = tgb.HomeState
 			nextStep = true
-		case tgb.StateSolvedIncorrectly:
+		case tgb.SolvedIncorrectlyState:
 			t.say(ctx, b, chatID, "Wrong, try again.")
-			sess.State = tgb.StateWaitingForResponse
+			sess.State = tgb.WaitingForResponseState
 		}
 	}
 
