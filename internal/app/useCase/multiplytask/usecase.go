@@ -1,24 +1,24 @@
 package multiplytask
 
 import (
-	"math/rand"
-
 	"github.com/cronfy/trainer/internal/app/domain"
 )
 
-type useCase struct{}
+type useCase struct {
+	randomTool randomTool
+}
 
-func New() *useCase {
-	return &useCase{}
+func New(randomTool randomTool) *useCase {
+	return &useCase{randomTool}
 }
 
 func (u *useCase) Get() domain.MultiplyTask {
 	operands := make([]int, 2)
 
-	operands[0] = randomBetween(1, 20)
-	operands[1] = randomBetween(1, 11)
+	operands[0] = u.randomTool.RandomBetween(1, 20)
+	operands[1] = u.randomTool.RandomBetween(1, 11)
 
-	if rand.Int31n(2) == 0 {
+	if u.randomTool.Chance(50) {
 		operands[0], operands[1] = operands[1], operands[0]
 	}
 
@@ -29,8 +29,4 @@ func (u *useCase) Get() domain.MultiplyTask {
 
 func (u *useCase) Solve(task domain.MultiplyTask, solution int) bool {
 	return task.Operands[0]*task.Operands[1] == solution
-}
-
-func randomBetween(min, max int) int {
-	return int(rand.Int31n(int32(max-min))) + min
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/cronfy/trainer/internal/app/useCase/multiplytask"
 	"github.com/cronfy/trainer/internal/telegrambot"
 	"github.com/cronfy/trainer/internal/telegrambot/domain"
+	"github.com/cronfy/trainer/internal/tools/random"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	tb := telegrambot.Build(multiplytask.New())
+	tb := telegrambot.Build(multiplytask.New(random.New()))
 
 	opts := []bot.Option{
 		bot.WithDefaultHandler(func(ctx context.Context, bot *bot.Bot, update *models.Update) {
