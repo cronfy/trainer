@@ -9,7 +9,8 @@ import (
 	"github.com/go-telegram/bot"
 	"github.com/joho/godotenv"
 
-	"oap/trainer/internal/telegrambot"
+	"oap/trainer/internal/app/useCase/multiplytask"
+	bot2 "oap/trainer/internal/telegrambot/bot"
 )
 
 func main() {
@@ -29,10 +30,11 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	trainerBot := telegrambot.NewTrainerBot()
+	trainerBot := bot2.NewTrainerBot(multiplytask.New())
 
 	opts := []bot.Option{
 		bot.WithDefaultHandler(trainerBot.ProcessMessage),
+		bot.WithMessageTextHandler("/start", bot.MatchTypeExact, trainerBot.ProcessStartCommand),
 	}
 
 	b, err := bot.New(os.Getenv("TELEGRAM_BOT_TOKEN"), opts...)
