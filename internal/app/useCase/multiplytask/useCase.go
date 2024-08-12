@@ -3,7 +3,7 @@ package multiplytask
 import (
 	"math/rand"
 
-	"oap/trainer/internal/app/domain"
+	"github.com/cronfy/trainer/internal/app/domain"
 )
 
 type useCase struct{}

@@ -7,34 +7,35 @@ import (
 	"os/signal"
 
 	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 	"github.com/joho/godotenv"
 
-	"oap/trainer/internal/app/useCase/multiplytask"
-	bot2 "oap/trainer/internal/telegrambot/bot"
+	"github.com/cronfy/trainer/internal/app/useCase/multiplytask"
+	"github.com/cronfy/trainer/internal/telegrambot"
+	"github.com/cronfy/trainer/internal/telegrambot/domain"
 )
 
 func main() {
 	fmt.Println("Starting Telegram Bot")
-
-	var err error
-
-	if _, err = os.Stat(".env.local"); err == nil {
-		err = godotenv.Load(".env.local", ".env")
-	} else {
-		err = godotenv.Load(".env")
-	}
-	if err != nil {
-		panic(fmt.Errorf("failed to load env: %w", err))
-	}
-
+	loadEnv()
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	trainerBot := bot2.NewTrainerBot(multiplytask.New())
+	tb := telegrambot.Build(multiplytask.New())
 
 	opts := []bot.Option{
-		bot.WithDefaultHandler(trainerBot.ProcessMessage),
-		bot.WithMessageTextHandler("/start", bot.MatchTypeExact, trainerBot.ProcessStartCommand),
+		bot.WithDefaultHandler(func(ctx context.Context, bot *bot.Bot, update *models.Update) {
+			b := domain.BotAPI(bot)
+			tb.ProcessMessage(ctx, b, update)
+		}),
+		bot.WithMessageTextHandler(
+			"/",
+			bot.MatchTypePrefix,
+			func(ctx context.Context, bot *bot.Bot, update *models.Update) {
+				b := domain.BotAPI(bot)
+				tb.ProcessCommand(ctx, b, update)
+			},
+		),
 	}
 
 	b, err := bot.New(os.Getenv("TELEGRAM_BOT_TOKEN"), opts...)
@@ -45,4 +46,17 @@ func main() {
 	fmt.Println("Waiting for commands")
 	b.Start(ctx)
 	fmt.Println("Done")
+}
+
+func loadEnv() {
+	var err error
+
+	if _, err = os.Stat(".env.local"); err == nil {
+		err = godotenv.Load(".env.local", ".env")
+	} else {
+		err = godotenv.Load(".env")
+	}
+	if err != nil {
+		panic(fmt.Errorf("failed to load env: %w", err))
+	}
 }
