@@ -1,0 +1,27 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+option go_package = "./generated";
+
+message MultiplyTask {
+    // operands for multiplication, example: [5, 7]
+    repeated int32 operands = 1;
+}
+
+message MultiplyTaskSolution {
+  // task
+  MultiplyTask task = 1;
+  // solution for the task, example: 35
+  int32 solution = 2;
+}
+
+message SolutionResult {
+  // whether a provided solution was correct or not
+  bool correct = 1;
+}
+
+service Trainer {
+  // get a multiplication task
+  rpc GetMultiplyTask(google.protobuf.Empty) returns (MultiplyTask);
+  // solve a multiplication task and verify the solution
+  rpc SolveMultiplyTask(MultiplyTaskSolution) returns (SolutionResult);
+}
