@@ -113,7 +113,8 @@ func (t *Bot) processEvent(ctx context.Context, b tgb.GoTgBot, event tgb.Event) 
 func (t *Bot) giveMultiplyTask(ctx context.Context, b tgb.GoTgBot, chatID tgb.ChatID, sess *tgb.Session) {
 	task := t.multiplyTaskUseCase.Get()
 	sess.MultiplyTask = &task
-	t.say(ctx, b, chatID, fmt.Sprintf("%d × %d", task.Operands[0], task.Operands[1]))
+	ops := task.GetOperands()
+	t.say(ctx, b, chatID, fmt.Sprintf("%d × %d", ops[0], ops[1]))
 }
 
 func (t *Bot) verifySolution(task app.MultiplyTask, response string) bool {

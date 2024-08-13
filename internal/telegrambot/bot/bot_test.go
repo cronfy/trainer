@@ -71,7 +71,7 @@ func TestTrainerBot_MultiplyScenario(t *testing.T) {
 
 	t.Run("send message and get a task", func(t *testing.T) {
 		botResponses = botResponses[:0]
-		nextMultiplyTask = app.MultiplyTask{Operands: []int{5, 7}}
+		nextMultiplyTask = app.NewMultiplyTask([2]int{5, 7})
 		message(t, to, "hi")
 		require.Len(t, botResponses, 1)
 		require.Contains(t, botResponses[0], "5 × 7")
@@ -104,7 +104,7 @@ func TestTrainerBot_MultiplyScenario(t *testing.T) {
 	t.Run("solve the task correctly", func(t *testing.T) {
 		botResponses = botResponses[:0]
 		solutionIsCorrect = true
-		nextMultiplyTask = app.MultiplyTask{Operands: []int{2, 13}}
+		nextMultiplyTask = app.NewMultiplyTask([2]int{2, 13})
 		message(t, to, "35")
 		require.Len(t, botResponses, 2)
 		require.Contains(t, botResponses[0], "Correct")
