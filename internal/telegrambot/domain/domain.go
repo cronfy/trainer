@@ -23,15 +23,15 @@ type Session struct {
 type Command int
 
 const (
-	StartCommand   Command = iota
 	UnknownCommand Command = iota
+	StartCommand
 )
 
 type EventType int
 
 const (
 	MessageEventType EventType = iota
-	CommandEventType EventType = iota
+	CommandEventType
 )
 
 type Event struct {
