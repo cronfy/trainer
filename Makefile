@@ -7,3 +7,5 @@ fmt:
 test:
 	go test ./...
 
+proto:
+	cd internal/grpc ; protoc --go_out=. --go_grpc_out=. ./*.proto
